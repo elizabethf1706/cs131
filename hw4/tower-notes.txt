@@ -1,0 +1,13 @@
+by calling our test via
+speedup(FloatingRatio)
+
+Testing our speed function our ratio gives us 15.542553191489361 
+Using our ambiguous function
+via ambiguous(6, C, T1, T2).
+ we get a result of 
+ 
+
+C = counts([6,3,4,2,2,1],[1,2,2,4,2,4],[6,3,4,2,2,1],[1,2,2,4,2,4])
+T1 = [[1,2,3,4,5,6],[2,1,4,6,3,5],[3,4,2,5,6,1],[4,6,5,3,1,2],[5,3,6,1,2,4],[6,5,1,2,4,3]]
+T2 = [[1,2,3,4,5,6],[2,1,4,3,6,5],[3,4,5,6,1,2],[4,3,6,5,2,1],[5,6,1,2,3,4],[6,5,2,1,4,3]] 
+this result is ambiguous because theres two different solutions for the one problem.
