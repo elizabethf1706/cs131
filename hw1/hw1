@@ -1,0 +1,99 @@
+
+open Stdlib;;
+open List;;
+
+(*1*)
+let rec subset a b = 
+      match a with
+      |  [] -> true
+      | h::t -> if List.mem h b then subset t b else false
+;;
+
+(*2*)
+let equal_sets a b = subset a b = subset b a 
+;;
+(*3*)
+let rec set_union a b =
+  match b with
+  | [] -> a 
+  | h :: t -> 
+      if List.mem h a then 
+        set_union a t
+      else 
+        set_union (h :: a) t
+;;
+(*4*)
+let set_all_union a =
+  List.fold_left set_union [] a
+;;
+(*5 see text file for answer*) 
+
+(*6*)
+let rec computed_fixed_point eq f x =
+    match eq x (f x) with 
+    | true -> x 
+    | false -> computed_fixed_point eq f (f x) 
+;;
+
+(*7*)
+let rec computed_periodic_point eq f p x = 
+  if p= 0 then x 
+  
+  else 
+  let prev = computed_periodic_point eq f (p - 1) (f x) in
+  if eq x (f (prev)) then x 
+ 	else computed_periodic_point eq f p (f x);;
+
+(*8*)
+let rec whileseq s p x = match p x with 
+    | true -> List.append[x] (whileseq s p (s x))
+    | false -> []
+;;
+(*9*)
+
+type ('nonterminal, 'terminal) symbol = 
+  | N of 'nonterminal
+  | T of 'terminal
+
+type ('nonterminal, 'terminal) symbol =
+    | N of 'nonterminal
+    | T of 'terminal
+
+
+let check_pair_match given terminal_list =
+  match List.find_opt (fun (x, _) -> x = given) terminal_list with
+  | Some _ -> true
+  | None -> false
+;;	
+let terminality_value given terminal_list = 
+    match given with
+    | T given -> true
+    | N given -> if check_pair_match given terminal_list then true    
+    else false
+;;
+
+let rec verify_existence rhs terminal_rhs = 
+    List.for_all (fun symbol -> terminality_value symbol terminal_rhs) rhs
+;;
+
+let rec create_terminal_rhs rules terminal_rhs = 
+    match rules with
+    | [] -> terminal_rhs
+    | rule::t -> 
+        let rhs = snd rule in
+        if (verify_existence rhs terminal_rhs) && not (subset [rule] terminal_rhs) 
+        then create_terminal_rhs t (rule::terminal_rhs)
+        else (create_terminal_rhs t terminal_rhs)
+;;
+
+let terminal_right g= 
+computed_fixed_point (=) (create_terminal_rhs (snd g)) [] 
+;;
+
+let filter_terminal_rules terminal_rhs g =
+  (fst g, List.filter (fun x -> List.mem x terminal_rhs) (snd g))
+;;
+
+let filter_blind_alleys g =
+  let terminal_rhs = terminal_right g in
+  filter_terminal_rules terminal_rhs g
