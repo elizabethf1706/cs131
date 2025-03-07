@@ -1,0 +1,59 @@
+let my_subset_test0 = subset [1] [1;2]
+
+let my_equal_sets_test0 = equal_sets [1;4] [1;4;5]
+
+let my_set_union_test0 = equal_sets (set_union [1;9] [2;4;5]) [1;2;4;5;9]
+
+let my_set_all_union_test0 = equal_sets (set_all_union [[2;4]; []; [1]]) [1;2;4]
+
+let my_computed_fixed_point_test0 = 
+    computed_fixed_point (=) (fun x -> x) 2242123 = 2242123
+
+let my_computed_periodic_point_test0 = 
+    computed_periodic_point (=) (fun x -> x /3) 0 (1) = (1)
+
+let my_whileseq_test0 = equal_sets (whileseq ((+) 3) ((>) 10) 0) [0;3;6;9]
+ type awksub_nonterminals =
+  | Expr | Lvalue | Incrop | Binop | Num
+
+let awksub_rules =
+   [Expr, [T"("; N Expr; T")"];
+    Expr, [N Num];
+    Expr, [N Expr; N Binop; N Expr];
+    Expr, [N Lvalue];
+    Expr, [N Incrop; N Lvalue];
+    Expr, [N Lvalue; N Incrop];
+    Lvalue, [T"$"; N Expr];
+    Incrop, [T"++"];
+    Incrop, [T"--"];
+    Binop, [T"+"];
+    Binop, [T"-"];
+    Num, [T"0"];
+    Num, [T"1"];
+    Num, [T"2"];
+    Num, [T"3"];
+    Num, [T"4"];
+    Num, [T"5"];
+    Num, [T"6"];
+    Num, [T"7"];
+    Num, [T"8"];
+    Num, [T"9"]]
+
+let my_filter_blind_alleys_test0 =
+  filter_blind_alleys (Expr,
+      [Expr, [N Num]; 
+       Expr, [N Expr; N Lvalue];
+       Expr, [N Expr; N Binop; N Expr];
+        Lvalue, [N Expr; N Lvalue]; 
+       Incrop, [T"++"]; Incrop, [T"--"];
+       Binop, [T"+"]; Binop, [T"-"];
+       Num, [T"0"];
+       Num, [T"5"]; ])
+  = (Expr,
+     [Expr, [N Num];
+      Expr, [N Expr; N Binop; N Expr];
+      Incrop, [T"++"]; Incrop, [T"--"];
+      Binop, [T "+"]; Binop, [T "-"];
+      Num, [T "0"];
+      Num, [T "5"];])
+let awksub_grammar = Expr, awksub_rules
